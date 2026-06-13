@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment2
+  namespace: akapitulov-netology2
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: wait
+        image: busybox
+        command: ['sh', '-c', "until nslookup service-nginx; do echo waiting for service-nginx; sleep 2; done"]
+  
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
