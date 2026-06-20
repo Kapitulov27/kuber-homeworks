@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: multitools-service-back
+spec:
+  type: NodePort
+  selector:
+    app: multitools
+  ports:
+    - name: multitools
+      port: 9002
+      targetPort: 8080
+      nodePort: 31080

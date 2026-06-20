@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multitools-deployment-back
+  labels:
+    app: multitools
+spec:
+  selector:
+    matchLabels:
+      app: multitools
+  template:
+    metadata:
+      labels:
+        app: multitools
+    spec:
+      containers:
+      - name: multitools
+        image: wbitt/network-multitool
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HTTP_PORT
+          value: "8080"
