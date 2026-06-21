@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-exchange
+spec:
+  selector:
+    matchLabels:
+      app: multibusy
+  template:
+    metadata:
+      labels:
+        app: multibusy
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["/bin/sh", "-c"] 
+        args: ["echo $(date) >> /etc/test/busybox.txt; sleep 30"] 
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /etc/test/  
+      - name: multitools
+        image: wbitt/network-multitool
+        args: ["/bin/sh", "-c", "sleep 5; tail -f /etc/test/busybox.txt"] 
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HTTP_PORT
+          value: "8080"
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /etc/test/  
+      volumes:
+      - name: shared-storage
+        emptyDir: {}  

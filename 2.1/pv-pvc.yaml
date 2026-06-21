@@ -1,0 +1,62 @@
+### - local PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual       
+  hostPath:
+    path: /data/netology-task    
+---
+### - PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  storageClassName: manual       
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+### - Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-exchange-pvc
+spec:
+  selector:
+    matchLabels:
+      app: multibusy
+  template:
+    metadata:
+      labels:
+        app: multibusy
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["/bin/sh", "-c"] 
+        args: ["while true; do echo $(date) >> /etc/test/busybox.txt; sleep 5; done"]
+        volumeMounts:
+        - name: mystorage
+          mountPath: /etc/test/
+      - name: multitools
+        image: wbitt/network-multitool
+        command: ["/bin/sh", "-c"] 
+        args: ["sleep 2; tail -f /etc/test/busybox.txt"]
+        volumeMounts:
+        - name: mystorage
+          mountPath: /etc/test/
+      volumes:
+      - name: mystorage
+        persistentVolumeClaim:
+          claimName: my-pvc
