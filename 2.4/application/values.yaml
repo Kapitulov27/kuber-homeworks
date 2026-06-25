@@ -1,0 +1,16 @@
+api:
+  replicaCount: 1
+  image:
+    repository: nginx
+    tag: "1.25.1" 
+  service:
+    port: 80
+
+database:
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: "15.3-alpine" 
+  storage:
+    size: 1Gi
+    storageClass: "standard"
